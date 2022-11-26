@@ -1,2 +1,7 @@
 Dados/teste.csv
 Outlook
+nao
+['Rainy', 'Mild', 'Normal', 't']
+['Overcast', 'Cool', 'Normal', 't']
+['Sunny', 'Hot', 'High', 't']
+EXIT

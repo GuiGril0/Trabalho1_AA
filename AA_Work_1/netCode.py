@@ -59,7 +59,7 @@ class NaiveBayes:
         self.num_feats = X.shape[1]
 
         for feature in self.features:
-            print("-------------------------------------------------")
+            print(feature)
             self.likelihoods[feature] = {}
             self.pred_priors[feature] = {}
 
@@ -99,7 +99,7 @@ class NaiveBayes:
                 outcome_count = sum(self.y_train == outcome)
                 feat_likelihood = self.X_train[feature][
                     self.y_train[self.y_train == outcome].index.values.tolist()].value_counts().to_dict()
-                print(f'77{self.y_train}')
+                print(f'77{feat_likelihood}')
 
                 for feat_val, count in feat_likelihood.items():
                     self.likelihoods[feature][feat_val + '_' + outcome] = count / outcome_count
@@ -120,7 +120,7 @@ class NaiveBayes:
 
         results = []
         X = np.array(X)
-
+        print(type(X))
         for query in X:
             probs_outcome = {}
             for outcome in np.unique(self.y_train):
