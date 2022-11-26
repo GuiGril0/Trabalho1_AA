@@ -7,18 +7,37 @@ def main():
     file = input("Introduza o nome do ficheiro: ")
     while not path.isfile(file):
         print("O nome de ficheiro introduzido não existe!")
-        main()
+        file = input("Introduza o nome do ficheiro: ")
     data = getContent(file)
 
     #Escolher coluna aqui!!!!!!!!!!!!!!!!!!
     column = input("Escolha a coluna: ")
 
-    print(data.columns['Play'])
-    while check_column(data, column) == -1:
+    while not check_column(data, column):
         column = input("Escolha a coluna: ")
-    print(column)
 
-    X, y = processData(data, column)
+    while True:
+        choice = input("Deseja atribuir um valor ao alpha? (caso não, alpha = 0): ")
+        # if choise.lower() in ["sim","não","nao","n","s"]:
+        if choice.lower() in ["sim", "não", "nao", "n", "s"]:
+            break
+
+    if choice.lower() == "sim" or choice.lower() == "s":
+        while True:
+            try:
+                alpha = float(input("Insira um valor para alpha (>= 0): "))
+                if alpha < 0.0:
+                    raise ValueError
+                break
+            except ValueError:
+                print("Insira um valor numérico real >= 0 para o alpha!")
+    else:
+        alpha = 0.0
+
+    X, y = processData(data, list(data.columns).index(column))
+
+    infos = getInfoForQuery(X)
+
 
     nb = NaiveBayesUevora()
     nb.__init__(alpha)
@@ -36,20 +55,35 @@ def getContent(filePath):
     return pd.read_csv(filePath)
 
 def check_column(data, column):
-    print(data.columns.get_indexer(column))
-    p
-    return data.columns.get_indexer(column)
+    return column in data.columns
 
 def processData(data, c):
     X = data.drop([data.columns[c]], axis=1)
     y = data[data.columns[c]]
     return X, y
 
+def getInfoForQuery(X):
+    infos = []
+    for i in X:
+        while True:
+            options = set(X[i].values)
+            print("Opções para a secção " + i)
+            print(options)
+            query = input("Insira o valor para a secção " + i + ": ")
+            if query in X[i].values:
+                infos.append(query)
+                break
+            print("O valor introduzido não existe!")
+    return infos
+
+
+
 class NaiveBayesUevora:
-    alpha = 0
+    alpha = 0.0
 
     #construtor
-    def __init__(self,  alpha = 0):
+    def __init__(self, alpha = 0.0):
+        self.alpha = alpha
         self.propriedades = list
         self.propNumVar = {}
         self.numOcorrencias = {}
@@ -61,7 +95,7 @@ class NaiveBayesUevora:
         self.treinoSize = int
         self.numPropriedades = int
 
-    """
+        """
         função para gerar um classificador
         a partir de um conjunto de treino
         """
@@ -106,7 +140,7 @@ class NaiveBayesUevora:
     """
     função para previsões em função
     de um conjunto de dados de teste,
-    com base no classificador definido
+    com base no classificador obtido
     na função fit(x, y)
     """
     def predict(self, X):
