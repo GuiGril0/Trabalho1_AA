@@ -12,7 +12,7 @@ def accuracy_score(y_true, y_pred):
 
 def pre_processing(df):
     """ partioning data into features and target """
-
+    print([df.columns[-1]])
     X = df.drop([df.columns[-1]], axis=1)
     y = df[df.columns[-1]]
 
@@ -59,24 +59,32 @@ class NaiveBayes:
         self.num_feats = X.shape[1]
 
         for feature in self.features:
+            print("-------------------------------------------------")
             self.likelihoods[feature] = {}
             self.pred_priors[feature] = {}
 
             for feat_val in np.unique(self.X_train[feature]):
+                print(f'@@{feat_val}')
                 self.pred_priors[feature].update({feat_val: 0})
 
                 for outcome in np.unique(self.y_train):
                     self.likelihoods[feature].update({feat_val + '_' + outcome: 0})
                     self.class_priors.update({outcome: 0})
-
+                    print(f'---{self.class_priors}')
+            print(self.likelihoods)
+            print(self.pred_priors)
         self._calc_class_prior()
         self._calc_likelihoods()
         self._calc_predictor_prior()
+        print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$4444444444444444444')
+        print(self.class_priors)
+        print(self.likelihoods)
+        print(self.pred_priors)
 
     def _calc_class_prior(self):
 
         """ P(c) - Prior Class Probability """
-
+        print(f'y-train{self.y_train}')
         for outcome in np.unique(self.y_train):
             outcome_count = sum(self.y_train == outcome)
             self.class_priors[outcome] = outcome_count / self.train_size
@@ -91,6 +99,7 @@ class NaiveBayes:
                 outcome_count = sum(self.y_train == outcome)
                 feat_likelihood = self.X_train[feature][
                     self.y_train[self.y_train == outcome].index.values.tolist()].value_counts().to_dict()
+                print(f'77{self.y_train}')
 
                 for feat_val, count in feat_likelihood.items():
                     self.likelihoods[feature][feat_val + '_' + outcome] = count / outcome_count
@@ -137,14 +146,15 @@ if __name__ == "__main__":
     # Weather Dataset
     print("\nWeather Dataset:")
 
-    df = pd.read_table("Dados/weather-nominal.csv")
-    print(df.values[1])
+    df = pd.read_csv("Dados/teste.csv")
+    # print(df)
 
     # Split fearures and target
     X, y = pre_processing(df)
+
     nb_clf = NaiveBayes()
     nb_clf.fit(X, y)
-
+    print(y)
     print("Train Accuracy: {}".format(accuracy_score(y, nb_clf.predict(X))))
 
     # Query 1:
