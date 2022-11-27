@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+#import NaiveBayesUevora
 
 from os import path
 
@@ -36,20 +37,13 @@ def main():
 
     X, y = processData(data, list(data.columns).index(column))
 
-    infos = getInfoForQuery(X)
 
 
     nb = NaiveBayesUevora()
     nb.__init__(alpha)
     nb.fit(X,y)
-    """
-    while True:
-        query = input("Insira a query: ")
-        if query.lower() == "exit":
-            break
-        print(np.fromstring(query))
-        nb.predict(np.array(query))
-    exit(1)"""
+    infos = getInfoForQuery(X)
+    print(nb.predict([infos]))
 
 def getContent(filePath):
     return pd.read_csv(filePath)
@@ -129,8 +123,8 @@ class NaiveBayesUevora:
             for var_final in np.unique(self.y_treino):
                 count_total = sum(self.y_treino == var_final)
                 prop_proba = self.x_treino[prop][self.y_treino[self.y_treino == var_final].index.values.tolist()].value_counts().to_dict()
-            for prop_val, count in prop_proba.items():
-                self.numOcorrencias[prop][prop_val+"_"+var_final] = (count +self.alpha) /(count_total + (self.alpha * self.propNumVar[prop]))
+                for prop_val, count in prop_proba.items():
+                    self.numOcorrencias[prop][prop_val+"_"+var_final] = (count +self.alpha) /(count_total + (self.alpha * self.propNumVar[prop]))
 
         for prop in self.propriedades:
             prop_vals = self.x_treino[prop].value_counts().to_dict()

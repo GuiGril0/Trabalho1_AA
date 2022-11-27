@@ -154,7 +154,7 @@ if __name__ == "__main__":
 
     nb_clf = NaiveBayes()
     nb_clf.fit(X, y)
-    print(y)
+    print(X)
     print("Train Accuracy: {}".format(accuracy_score(y, nb_clf.predict(X))))
 
     # Query 1:
