@@ -5,70 +5,75 @@ import pandas as pd
 from os import path
 
 def main():
-    file = input("Introduza o nome do ficheiro: ")
-    while not path.isfile(file):
-        print("O nome de ficheiro introduzido não existe!")
+    while True:
         file = input("Introduza o nome do ficheiro: ")
-    data = getContent(file)
+        if path.isfile(file):
+            break
+        print("O input introduzido não corresponde a nenhum ficheiro existente!")
 
-    #Escolher coluna aqui!!!!!!!!!!!!!!!!!!
-    column = input("Escolha a coluna: ")
-
-    while not check_column(data, column):
-        column = input("Escolha a coluna: ")
+    data = get_content(file)
 
     while True:
-        choice = input("Deseja atribuir um valor ao alpha? (caso não, alpha = 0): ")
-        # if choise.lower() in ["sim","não","nao","n","s"]:
-        if choice.lower() in ["sim", "não", "nao", "n", "s"]:
+        column = input("Escolha uma coluna: ")
+        if check_column(data, column):
             break
+        print("A coluna introduzida não corresponde a nenhuma coluna existente no ficheiro " + file + "!")
 
-    if choice.lower() == "sim" or choice.lower() == "s":
+    while True:
+        choice = input("Deseja atribuir um valor ao alpha? ")
+        if choice.lower() in ["sim", "s", "não", "nao", "n"]:
+            break
+        print("Insira uma resposta que seja válida!")
+
+    alpha = 0.0
+
+    if choice.lower() in ["sim", "s"]:
         while True:
             try:
-                alpha = float(input("Insira um valor para alpha (>= 0): "))
-                if alpha < 0.0:
-                    raise ValueError
-                break
+                alpha = float(input("Introduza um valor para o alpha: "))
+                if alpha >= 0.0:
+                    break
+                raise ValueError
             except ValueError:
-                print("Insira um valor numérico real >= 0 para o alpha!")
-    else:
-        alpha = 0.0
+                print("Introduza um valor válido para o alpha (>= 0.0)!")
 
-    X, y = processData(data, list(data.columns).index(column))
-
-
+    X, y = process_data(data, column)
 
     nb = NaiveBayesUevora()
     nb.__init__(alpha)
-    nb.fit(X,y)
-    infos = getInfoForQuery(X)
-    print(nb.predict([infos]))
+    nb.fit(X, y)
 
-def getContent(filePath):
+    print(data.rows)
+
+    while True:
+        test = input("Introduza o ficheiro de teste: ")
+        if path.isfile(test):
+            break
+        print("O input introduzido não corresponde a um ficheiro existente!")
+
+    d = get_content(test)
+
+    dX, dy = process_data(d, column)
+
+    nb.predict(dX)
+
+
+def get_content(filePath):
     return pd.read_csv(filePath)
 
 def check_column(data, column):
     return column in data.columns
 
-def processData(data, c):
+def process_data(data, c):
+    print(data)
     X = data.drop([data.columns[c]], axis=1)
     y = data[data.columns[c]]
     return X, y
 
-def getInfoForQuery(X):
-    infos = []
-    for i in X:
-        while True:
-            options = set(X[i].values)
-            print("Opções para a secção " + i)
-            print(options)
-            query = input("Insira o valor para a secção " + i + ": ")
-            if query in X[i].values:
-                infos.append(query)
-                break
-            print("O valor introduzido não existe!")
-    return infos
+def compare_datas(data, d):
+    test = []
+    training = []
+
 
 
 
