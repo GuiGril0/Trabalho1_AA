@@ -25,7 +25,7 @@ class NaiveBayesUevora:
         self.yTreino = y
         self.treinoSize = x.shape[0]
         self.numColunas = x.shape[1]
-
+        print(f'{self.treinoSize}-{self.numColunas}')
         for atributo in self.colunas:
             self.probaXc[atributo] = {}
             self.probaX[atributo] = {}
@@ -45,6 +45,7 @@ class NaiveBayesUevora:
             #P(c) = ( nOcorrencias + alpha)/(total * (alpha * NPropriedades))
             self.classes[valorY] = (nOcorrencias + self.alpha) / \
                (self.treinoSize + (self.alpha * len(np.unique(self.yTreino))))
+            print(f'P({valorY}) = {self.classes[valorY]}')
 
         # P(b|a)
         for atributo in self.colunas:
@@ -52,10 +53,11 @@ class NaiveBayesUevora:
             for valorY in np.unique(self.yTreino):
                 nOcorrY = sum(self.yTreino == valorY)
                 nOcorrX_Y = self.xTreino[atributo][self.yTreino[\
-                    self.yTreino == valorY].index].value_counts().to_dict()
+                    self.yTreino == valorY].index.values.tolist()].value_counts().to_dict()
                 for valor, nOcorr in nOcorrX_Y.items():
                     self.probaXc[atributo][valor][valorY] = (nOcorr + self.alpha)/ \
                         (nOcorrY + (self.alpha * self.numPropriedades[atributo]))
+                    print(f'P({valor}|{valorY}) = {self.probaXc[atributo][valor][valorY]}')
 
     def addPropriety(self,atributo, propriedade):
         self.probaXc[atributo][propriedade] = {}
@@ -64,7 +66,7 @@ class NaiveBayesUevora:
             nOcorrY = sum(self.yTreino == valorY)
             nOcorrX_Y = 0
             self.probaXc[atributo][propriedade][valorY] = (nOcorrX_Y + self.alpha) / \
-                                                        (nOcorrY + (self.alpha * self.numPropriedades[atributo]))
+                                                        (nOcorrY + (self.alpha * self.numPropriedades[atributo]+1))
     """
         # P(b)
         for atributo in self.colunas:
@@ -98,11 +100,11 @@ class NaiveBayesUevora:
     def precision_score(self, x, y):
         resultados =[]
         prev = self.predict(x)
-        vp = 0
-        fp = 0
         for valorY in np.unique(self.yTreino):
+            vp = 0
+            fp = 0
             for vy , vyp in zip(y, prev):
-               # print(f'{vy},{vyp},{valorY}')
+                # print(f'{vy},{vyp},{valorY}')
                 if vy == vyp and vyp == valorY:
                     vp +=1
                 elif vy != valorY and valorY == vyp:
@@ -111,7 +113,7 @@ class NaiveBayesUevora:
                 resultados.append(0)
             else:
                 resultados.append(vp / (vp + fp))
-            print(resultados)
+        print(resultados)
         return round(float(sum(resultados)/len(resultados)*100),2)
 
 
@@ -119,7 +121,7 @@ nb = NaiveBayesUevora()
 file = pd.read_csv("Dados/breast-cancer-train.csv")
 x = file.drop([file.columns[-1]], axis= 1)
 y = file[file.columns[-1]]
-nb.__init__()
+nb.__init__(1)
 nb.fit(x,y)
 file = pd.read_csv("Dados/breast-cancer-test.csv")
 x1 = file.drop([file.columns[-1]], axis= 1)
