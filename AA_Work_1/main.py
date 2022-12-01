@@ -12,7 +12,9 @@ nb.fit(x,y)
 file = pd.read_csv("Dados/breast-cancer-test.csv")
 x1 = file.drop([file.columns[-1]], axis= 1)
 y2 = file[file.columns[-1]]
-print(f'Previsão: {nb.predict(x1)}')
+print("Previsão:")
+for q, r in zip(np.array(x1),nb.predict(x1)):
+    print(f'{q} --> {r}')
 print(f'Precisão: {nb.precision_score(x1, y2)}')
 print(f'Exatidão: {nb.accuracy_score(x1,y2)}')
 
@@ -26,7 +28,9 @@ nb.fit(x,y)
 file = pd.read_csv("Dados/breast-cancer-test2.csv")
 x1 = file.drop([file.columns[-1]], axis= 1)
 y2 = file[file.columns[-1]]
-print(f'Previsão: {nb.predict(x1)}')
+print("Previsão:")
+for q, r in zip(np.array(x1),nb.predict(x1)):
+    print(f'{q} --> {r}')
 print(f'Precisão: {nb.precision_score(x1, y2)}')
 print(f'Exatidão: {nb.accuracy_score(x1,y2)}')
 
@@ -40,4 +44,6 @@ nb.fit(x,y)
 
 x1 = [["rainy","hot","normal","t"]]
 y2 =[["no"]]
-print(f'Previsão: {nb.predict(x1)}')
+print("Previsão:")
+for q, r in zip(np.array(x1),nb.predict(x1)):
+    print(f'{q} --> {r}')

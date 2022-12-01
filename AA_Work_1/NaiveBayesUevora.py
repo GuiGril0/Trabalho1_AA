@@ -56,6 +56,7 @@ class NaiveBayesUevora:
                     self.probaXc[atributo][valor][valorY] = (nOcorr + self.alpha)/ \
                         (nOcorrY + (self.alpha * self.numPropriedades[atributo]))
 
+
     def addPropriety(self,atributo, propriedade):
         self.probaXc[atributo][propriedade] = {}
         for valorY in np.unique(self.yTreino):
@@ -64,14 +65,7 @@ class NaiveBayesUevora:
             nOcorrX_Y = 0
             self.probaXc[atributo][propriedade][valorY] = (nOcorrX_Y + self.alpha) / \
                                                         (nOcorrY + (self.alpha * self.numPropriedades[atributo]+1))
-    """
-        # P(b)
-        for atributo in self.colunas:
-            nOcorrX = self.xTreino[atributo].value_counts().to_dict()
-            for valor, nOcorr in nOcorrX.items():
-                self.probaX[atributo][valor] = (nOcorr + self.alpha)/ \
-                   (self.treinoSize + self.alpha + self.numPropriedades[atributo]) 
-    """
+
 
     def predict(self, x):
         resultados = []
@@ -88,12 +82,14 @@ class NaiveBayesUevora:
                 possiveisResultados[valorY] = Pba * Pa  # (Pba*Pa)/Pb
             resultado = max(possiveisResultados,key=lambda x: possiveisResultados[x])
             resultados.append(resultado)
-            #resultados.append(possiveisResultados)
-       # print(resultados)
         return np.array(resultados)
+
+
     def accuracy_score(self, x, y):
         prev = self.predict(x)
         return round(float((sum(prev == y))/ float(len(y))*100),2)
+
+
     def precision_score(self, x, y):
         resultados =[]
         prev = self.predict(x)
@@ -110,7 +106,6 @@ class NaiveBayesUevora:
                 resultados.append(0)
             else:
                 resultados.append(vp / (vp + fp))
-        #print(resultados)
         return round(float(sum(resultados)/len(resultados)*100),2)
 
 
