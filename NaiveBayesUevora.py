@@ -57,7 +57,7 @@ class NaiveBayesUevora:
                         (nOcorrY + (self.alpha * self.numPropriedades[atributo]))
 
 
-    def addPropriety(self,atributo, propriedade):
+    def add_property(self,atributo, propriedade):
         self.probaXc[atributo][propriedade] = {}
         for valorY in np.unique(self.yTreino):
             self.probaXc[atributo][propriedade][valorY] = 0
@@ -77,7 +77,7 @@ class NaiveBayesUevora:
                 Pba = 1
                 for atributo, propriedade in zip(self.colunas, teste):
                     if propriedade not in np.unique(self.xTreino[atributo]):
-                        self.addPropriety(atributo, propriedade)
+                        self.add_property(atributo, propriedade)
                     Pba *= self.probaXc[atributo][propriedade][valorY]
                 possiveisResultados[valorY] = Pba * Pa  # (Pba*Pa)/Pb
             resultado = max(possiveisResultados,key=lambda x: possiveisResultados[x])
